@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.Hashtable;
+
 public class UiUtil {
 
     public static final String TAG = "UiUtil";
@@ -26,7 +30,7 @@ public class UiUtil {
             return false;
         Typeface tf = null;
         try {
-            tf = Typeface.createFromAsset(ctx.getAssets(), "fonts/" + asset);
+            tf = getFont(ctx, asset);
             if (textViewOrButton instanceof TextView) {
                 ((TextView) textViewOrButton).setTypeface(tf);
             } else {
@@ -40,4 +44,26 @@ public class UiUtil {
         return true;
     }
 
+    private static final Hashtable<String, SoftReference<Typeface>> fontCache = new Hashtable<String, SoftReference<Typeface>>();
+
+    public static Typeface getFont(Context c, String name) {
+        synchronized (fontCache) {
+            if (fontCache.get(name) != null) {
+                SoftReference<Typeface> ref = fontCache.get(name);
+                if (ref.get() != null) {
+                    return ref.get();
+                }
+            }
+
+            Typeface typeface = Typeface.createFromAsset(
+                    c.getAssets(),
+                    "fonts/" + name
+            );
+            fontCache.put(name, new SoftReference<Typeface>(typeface));
+
+            return typeface;
+        }
+    }
+
 }
+

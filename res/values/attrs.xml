@@ -1,4 +1,3 @@
-
 <resources>
 
     <attr name="font" format="string"/>
@@ -9,6 +8,5 @@
     <declare-styleable name="com.github.browep.customfonts.view.FontableButton">
         <attr name="font" />
     </declare-styleable>
-
 
 </resources>
